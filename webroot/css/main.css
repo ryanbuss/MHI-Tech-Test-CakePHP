@@ -1,0 +1,29 @@
+ul.pagination li 
+{
+    display: inline-block;
+}
+
+ul.pagination li.disabled
+{
+    background-color: #ccc;
+}
+
+ul.pagination li > a
+{
+    display: block;
+    padding: 5px 10px;
+    text-decoration: none;
+    border: 1px solid black;
+}
+
+ul.pagination li:not(.disabled) > a:hover,
+ul.pagination li.active > a
+{
+    background-color: blue;
+    color: white;
+}
+
+.error-message
+{
+    color: red;
+}
