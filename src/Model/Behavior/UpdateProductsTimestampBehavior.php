@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Behavior;
@@ -19,7 +20,7 @@ class UpdateProductsTimestampBehavior extends Behavior
      */
     public function beforeSave(EventInterface $event, Entity $entity, \ArrayObject $options): void
     {
-        // Only update updated if the entity is not new
+        // Only update 'updated' field if the entity is NOT a new database entry e.g. not a new product
         if (!$entity->isNew()) {
             $entity->set('updated', date('Y-m-d H:i:s'));
         }

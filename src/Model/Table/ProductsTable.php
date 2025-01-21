@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Model\Table;
@@ -45,82 +46,84 @@ class ProductsTable extends Table
 
         $this->addBehavior('Timestamp');
 
+        //Add Custom Behaviour - to update the updated field
         $this->addBehavior('App\Model\Behavior\UpdateProductsTimestampBehavior');
     }
 
-    //Get Products - with search filters
-    public function getProducts(?String $search = null, Array $statuses = [])
+    /**
+     * Get Products from database
+     *
+     * Filter products with search query and status ids
+     *
+     * @param string|null $search. Search query for the product name.
+     * @param array<int> $statuses. Array of status ID's to filter (In Stock, Low Stock, Out of Stock).
+     *     [Above] Default to empty array
+     * @return \Cake\ORM\Query The query object containing the products with the search & filters applied
+     */
+    public function getProducts(?string $search = null, array $statuses = [])
     {
+        //Initial query to get all Database records ...
         $products = $this->find('all');
 
-        //Filter Out Deleted
+        // ...Filter out deleted
         $products->where(['deleted !=' => 1]);
 
-        //Search
-        if (!empty($search))
-        {
+        // ... Apply search filter
+        if ($search) {
             $products->where([
                 'LOWER(Products.name) LIKE' => '%' . strtolower($search) . '%',
             ]);
         }
 
-        //Filter based on status
-        if (!empty($statuses)) 
-        {
+        // ...Filter based on status
+        if (sizeof($statuses) > 0) {
             $statusConditions = [];
-            if (in_array(1, $statuses)) 
-            {
+            if (in_array(1, $statuses)) {
                 $statusConditions[] = ['Products.quantity >' => 10]; // In Stock
             }
-            if (in_array(2, $statuses)) 
-            {
+            if (in_array(2, $statuses)) {
                 $statusConditions[] = ['Products.quantity BETWEEN 1 AND 10']; // Low Stock
             }
-            if (in_array(3, $statuses)) 
-            {
+            if (in_array(3, $statuses)) {
                 $statusConditions[] = ['Products.quantity' => 0]; // No Stock
             }
-            if (!empty($statusConditions)) 
-            {
+            if (!empty($statusConditions)) {
                 $products->where(['OR' => $statusConditions]);
             }
         }
 
-        $products->formatResults(function ($results) use ($statuses)
-        {
-            return $results->map(function ($product) use ($statuses)
-            {
+        //Loop through database records
+        $products->formatResults(function ($results) {
+            return $results->map(function ($product) {
                 /* ============
-                    URL Slug 
+                    URL Slug
                 ============ */
+                //1. Product Name to lowercase
                 $slug = strtolower($product->name);
-                
-                // Replace non-alphanumeric characters with a hyphen
+
+                //2. Replace non-alphanumeric characters with a hyphen
                 $slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
-                
-                // Trim hyphens from the beginning and end
+
+                //3. Trim hyphens from the beginning and end
                 $slug = trim($slug, '-');
-                
+
+                //Assign to $products (to be used in the URLS on the index page)
                 $product->url_slug = $slug;
-                
 
                 /* ============
                     Statuses
                 ============ */
-                if($product->quantity > 10)
-                {
+                //Assign Status ID using criteria
+                if ($product->quantity > 10) {
                     $product->status_id = 1;
-                }
-                else if($product->quantity >= 1)
-                {
+                } elseif ($product->quantity >= 1) {
                     $product->status_id = 2;
-                }
-                else
-                {
+                } else {
                     $product->status_id = 3;
                 }
 
-                $product->status = $this->getProductStatusLabels()[$product->status_id ?? 0] ?? NULL;
+                //Assign status to the Status Label, using array set in getProductStatusLabels() method
+                $product->status = $this->getProductStatusLabels()[$product->status_id ?? 0] ?? null;
 
                 return $product;
             });
@@ -129,8 +132,12 @@ class ProductsTable extends Table
         return $products;
     }
 
-    //Get the product status labels
-    public function getProductStatusLabels(): Array
+    /**
+     * Get product status labels based on status ID
+     *
+     * @return array<int, string> Array of key: status id and value: status label
+     */
+    public function getProductStatusLabels(): array
     {
         return [
             1 => "In Stock",
@@ -139,21 +146,23 @@ class ProductsTable extends Table
         ];
     }
 
-    //Delete Product
-    public function deleteProduct($productId)
+    /**
+     * Soft delete product by updating deleted database field to 1
+     *
+     * @param int $productId. Product ID of product to delete
+     * @return bool True if product successfully deleted. False if it's not successful
+     */
+    public function deleteProduct(int $productId): bool
     {
         $product = $this->get($productId);
-        
+
         //Soft Delete - Update Database 'deleted' Column to 1
         $product->deleted = 1;
 
-        if ($this->save($product)) 
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
+        if ($this->save($product)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -172,13 +181,11 @@ class ProductsTable extends Table
             ->minLength('name', 3, 'Product name must be at least 3 characters long.')
             ->maxLength('name', 50, 'Product name cannot exceed 50 characters.')
             ->add('name', 'unique', [
-                'rule' => function ($value, $context)
-                {
+                'rule' => function ($value, $context) {
                     $conditions = ['name' => $value];
 
                     // Exclude the current record if editing
-                    if (!empty($context['data']['id']))
-                    {
+                    if (!empty($context['data']['id'])) {
                         $conditions['id !='] = $context['data']['id'];
                     }
 
@@ -207,8 +214,7 @@ class ProductsTable extends Table
         // Custom validation: Price > 100 requires quantity >= 10
         $validator->add('quantity', 'minQuantityForHighPrice', [
             'rule' => function ($value, $context) {
-                if (!empty($context['data']['price']) && $context['data']['price'] > 100)
-                {
+                if (!empty($context['data']['price']) && $context['data']['price'] > 100) {
                     return $value >= 10;
                 }
                 return true; // No price condition, allow
@@ -218,8 +224,7 @@ class ProductsTable extends Table
 
         // Custom validation: Name with "promo" requires price < 50
         $validator->add('price', 'promoPriceLimit', [
-            'rule' => function ($value, $context) 
-            {
+            'rule' => function ($value, $context) {
                 if (!empty($context['data']['name']) && stripos($context['data']['name'], 'promo') !== false) {
                     return $value < 50;
                 }
@@ -230,5 +235,4 @@ class ProductsTable extends Table
 
         return $validator;
     }
-
 }

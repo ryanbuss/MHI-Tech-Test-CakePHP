@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
@@ -25,9 +26,17 @@ class ProductsControllerTest extends TestCase
         'app.Products',
     ];
 
-    //Test Delete
+    /**
+     * Test Delete Product Method
+     *
+     * Verifies that product with ID 1 is not initially deleted ('deleted' database field equals 0)
+     * Then simulates visiting the delete page for this product
+     * Ensures the product is marked as deleted by checking the 'deleted' field in the database equals 1
+     *
+     * @return void
+     */
     public function testDeleteProduct(): void
-    {   
+    {
         //Get Product 1 from Database
         $products = $this->getTableLocator()->get('products');
         $product = $products->get(1);
@@ -38,7 +47,7 @@ class ProductsControllerTest extends TestCase
 
         //URL (Product Delete Route)
         $this->get('/product/delete/1/test-slug');
-        
+
         //Assertion 2:
         //Check the page loads correctly / the response indicates success
         $this->assertResponseSuccess();
@@ -52,7 +61,15 @@ class ProductsControllerTest extends TestCase
         $this->assertEquals(1, $product->deleted, 'Product should be marked as deleted');
     }
 
-    //Test index
+    /**
+     * Test index method
+     *
+     * Simulates visiting the products page. Ensures the page loads correctly with a success response.
+     * Checks the page contains certain text to ensure it loads in correct data.
+     * 11-14 checks data for the specific products being added
+     *
+     * @return void
+     */
     public function testIndex(): void
     {
         //URL (Products Index Page)
@@ -82,7 +99,14 @@ class ProductsControllerTest extends TestCase
         $this->assertResponseContains('Next');
     }
 
-    //Test Add New Product
+    /**
+     * Test add new product with valid data
+     *
+     * Simulates submitting a form with valid product data.
+     * Verifies that the product is successfully saved to the database.
+     *
+     * @return void
+     */
     public function testAddNewProductValid(): void
     {
         //Form Data
@@ -96,14 +120,22 @@ class ProductsControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->enableSecurityToken();
         $this->post('/product/add', $data);
-        
+
         // Verify the product was saved
         $products = $this->getTableLocator()->get('products');
         $query = $products->find()->where(['name' => 'New Product']);
         $this->assertEquals(1, $query->count(), 'Product should be saved.');
     }
 
-    //Test Add New Product
+    /**
+     * Test add new product with invalid data
+     *
+     * Simulates submitting a form with invalid product data.
+     * Ensures the page contains certain error messages
+     * Verifies that the product is does not successfully saved to the database.
+     *
+     * @return void
+     */
     public function testAddNewProductInvalid(): void
     {
         //Form Data
@@ -117,7 +149,7 @@ class ProductsControllerTest extends TestCase
         $this->enableCsrfToken();
         $this->enableSecurityToken();
         $this->post('/product/add', $data);
-        
+
         //Assert validation errors are returned
         $this->assertResponseContains('Product name is required.');
         $this->assertResponseContains('Quantity cannot be negative.');

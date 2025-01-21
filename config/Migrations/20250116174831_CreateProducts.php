@@ -1,5 +1,8 @@
 <?php
+
 declare(strict_types=1);
+
+namespace Migrations;
 
 use Migrations\BaseMigration;
 
@@ -16,22 +19,23 @@ class CreateProducts extends BaseMigration
     {
 
         $table = $this->table('products');
-	
+
         $table
-	      //Name Column (String, Max 50 Characters, Not Nullable / Is Required
-	      ->addColumn('name', 'string', [
+            //Name Column (String, Max 50 Characters, Not Nullable / Is Required
+            ->addColumn('name', 'string', [
                   'limit' => 50,
                   'null' => false
-	      ])
+            ])
 
             //Quantitiy Column (Integer, Max 4 digits, Not Nullable / Is Required, Default 0)
             ->addColumn('quantity', 'integer', [
                   'limit' => 4,
                   'null' => false,
-                  'default' => 0,
+                  'default' => 0
             ])
 
-            //Price Column (Decimal, Total 7 Digits [Including after decimal], Total 2 Decimal Places, Not Nullable / Is Required, Default 0)
+            //Price Column (Decimal, Total 7 Digits [Including after decimal],
+            //Total 2 Decimal Places, Not Nullable / Is Required, Default 0)
             ->addColumn('price', 'decimal', [
                   'precision' => 7,
                   'scale' => 2,
@@ -50,13 +54,12 @@ class CreateProducts extends BaseMigration
                   'default' => 'CURRENT_TIMESTAMP',
                   'null' => false
             ])
-            
+
             //Updated Column (datetime, no default, Is Nullable / Not Required)
             ->addColumn('updated', 'datetime', [
                   'default' => null,
                   'null' => true
             ])
             ->create();
-
     }
 }

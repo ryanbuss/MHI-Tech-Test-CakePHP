@@ -36,15 +36,17 @@
             'class' => 'btn btn-success'
         ]) ?>
 
+    <?php //Close form ?>
     <?= $this->Form->end() ?>
 
     <hr>
 
     <?php //Products Table ?>
-    <?php if( ($products->count() ?? 0) > 0): ?>
+    <?php if (($products->count() ?? 0) > 0) : ?>
         <table class="table">
             <thead>
                 <tr>
+                    <!-- Table Headers -->
                     <th scope="col">Name</th>
                     <th scope="col">Quantity</th>
                     <th scope="col">Price</th>
@@ -54,13 +56,14 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($products as $product): ?>
+                <?php //Loop through products and display them in the table ?>
+                <?php foreach ($products as $product) : ?>
                     <tr>
                         <td><?= h($product->name) ?></td>
                         <td><?= h($product->quantity) ?></td>
                         <td>&pound;<?= h($product->price) ?></td>
                         <td><?= h($product->status) ?></td>
-                        <td><?= ($product->updated != "" ? date('D jS M Y H:i', strtotime(h($product->updated))) : NULL) ?></td>
+                        <td><?= ($product->updated != "" ? date('D jS M Y H:i', strtotime(h($product->updated))) : null) ?></td>
                         <td>
                             <a href="<?= $this->Url->build(['_name' => 'product.edit', 'productId' => $product->id, "productSlug" => $product->url_slug ?? 'product']); ?>" class="btn btn-warning btn-sm">Edit</a>
                             <a href="" data-url="<?= $this->Url->build(['_name' => 'product.delete', 'productId' => $product->id, "productSlug" => $product->url_slug ?? 'product']); ?>" data-name="<?= h($product->name) ?>" class="btn btn-danger btn-sm delete-btn">Delete</a>

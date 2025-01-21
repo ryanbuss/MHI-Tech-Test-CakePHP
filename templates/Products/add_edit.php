@@ -1,7 +1,7 @@
 <div class="container">
     
     <h1><?= (isset($product) && $product->id ? "Edit" : "Add") ?> Product</h1>
-    <?php if(!empty($product->name ?? "")): ?>
+    <?php if (!empty($product->name ?? "")) : ?>
         <h2>Product: <?= h($product->name); ?></h2>
     <?php endif; ?>
 

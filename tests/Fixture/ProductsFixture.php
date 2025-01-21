@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Test\Fixture;
@@ -25,7 +26,7 @@ class ProductsFixture extends TestFixture
                 'price' => 4.99,
                 'deleted' => 0,
                 'created' => '2025-01-16 18:21:14',
-                'updated' => NULL,
+                'updated' => null,
             ],
             [
                 'id' => 2,
@@ -34,7 +35,7 @@ class ProductsFixture extends TestFixture
                 'price' => 3.49,
                 'deleted' => 0,
                 'created' => '2025-01-16 18:21:14',
-                'updated' => NULL,
+                'updated' => null,
             ],
             [
                 'id' => 3,
@@ -43,7 +44,7 @@ class ProductsFixture extends TestFixture
                 'price' => 120.00,
                 'deleted' => 0,
                 'created' => '2025-01-16 18:21:14',
-                'updated' => NULL,
+                'updated' => null,
             ],
             [
                 'id' => 4,
@@ -52,7 +53,7 @@ class ProductsFixture extends TestFixture
                 'price' => 10.00,
                 'deleted' => 0,
                 'created' => '2025-01-16 18:21:14',
-                'updated' => NULL,
+                'updated' => null,
             ],
             [
                 'id' => 5,
@@ -61,7 +62,7 @@ class ProductsFixture extends TestFixture
                 'price' => 30.00,
                 'deleted' => 0,
                 'created' => '2025-01-16 18:21:14',
-                'updated' => NULL,
+                'updated' => null,
             ],
             [
                 'id' => 6,
@@ -70,7 +71,7 @@ class ProductsFixture extends TestFixture
                 'price' => 40.00,
                 'deleted' => 0,
                 'created' => '2025-01-16 18:21:14',
-                'updated' => NULL,
+                'updated' => null,
             ],
             [
                 'id' => 7,
@@ -79,7 +80,7 @@ class ProductsFixture extends TestFixture
                 'price' => 1.50,
                 'deleted' => 0,
                 'created' => '2025-01-16 18:21:14',
-                'updated' => NULL,
+                'updated' => null,
             ],
             [
                 'id' => 8,
@@ -88,7 +89,7 @@ class ProductsFixture extends TestFixture
                 'price' => 15.00,
                 'deleted' => 0,
                 'created' => '2025-01-16 18:21:14',
-                'updated' => NULL,
+                'updated' => null,
             ],
             [
                 'id' => 9,
@@ -97,7 +98,7 @@ class ProductsFixture extends TestFixture
                 'price' => 2.00,
                 'deleted' => 0,
                 'created' => '2025-01-16 18:21:14',
-                'updated' => NULL,
+                'updated' => null,
             ],
             [
                 'id' => 10,
@@ -106,7 +107,7 @@ class ProductsFixture extends TestFixture
                 'price' => 500.00,
                 'deleted' => 0,
                 'created' => '2025-01-16 18:21:14',
-                'updated' => NULL,
+                'updated' => null,
             ]
         ];
         parent::init();
